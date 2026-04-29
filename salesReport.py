@@ -38,3 +38,7 @@ def generate_report(df):
     top_product = df.groupby("product")["quantity"].sum()
     top_product = top_product.sort_values(ascending=False)
     print(top_product.head(1))
+
+def save_report(df):
+    df.to_csv("output.csv", index=False)
+    print("Report saved to output.csv!")
