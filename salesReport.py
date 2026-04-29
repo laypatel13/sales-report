@@ -11,6 +11,8 @@ def load_data(filename):
     print("\nFirst 5 rows:")
     print(df.head())
 
+    return df
+
 def clean_data(df):
     print(f"\nMissing values before cleaning:")
     print(df.isnull().sum())
@@ -42,7 +44,7 @@ def generate_report(df):
 def save_report(df):
     df.to_csv("output.csv", index=False)
     print("Report saved to output.csv!")
-
+    
 def main():
     filename = input("Enter CSV filename: ")
     df = load_data(filename)
