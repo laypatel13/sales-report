@@ -42,3 +42,36 @@ def generate_report(df):
 def save_report(df):
     df.to_csv("output.csv", index=False)
     print("Report saved to output.csv!")
+
+def main():
+    filename = input("Enter CSV filename: ")
+    df = load_data(filename)
+    if df is None:
+        return
+    
+    while True:
+        print("\n--- Sales Report Generator ---")
+        print("1. Clean data")
+        print("2. Generate report")
+        print("3. Save cleaned data")
+        print("4. Quit")
+        
+        try:
+            choice = int(input("Enter choice: "))
+        except ValueError:
+            print("Please enter a number!")
+            continue
+            
+        if choice == 1:
+            df = clean_data(df)
+        elif choice == 2:
+            generate_report(df)
+        elif choice == 3:
+            save_report(df)
+        elif choice == 4:
+            print("Bye!")
+            break
+        else:
+            print("Invalid choice!")
+
+main()
