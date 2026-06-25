@@ -71,6 +71,39 @@ def save_report(df):
     except Exception as e:
         print(Fore.WHITE + Back.RED + f"Fatal Error: Failed to save report. {e}" + Style.RESET_ALL)
 
+def export_report(df, source_filename):
+    df["revenue"] = df["quantity"] * df["price"]
+    lines = []
+    lines.append("--- Sales Report ---\n")
+    lines.append(f"Source: {source_filename}\n\n")
+
+    lines.append(f"Total Revenue: {df['revenue'].sum():.2f}\n\n")
+
+    lines.append("--- Sales by Category ---\n")
+    by_category = df.groupby("category")["revenue"].sum()
+    for category, revenue in by_category.items():
+        lines.append(f"  {category}: {revenue:.2f}\n")
+
+    lines.append("\n--- Sales by Region ---\n")
+    by_region = df.groupby("region")["revenue"].sum()
+    for region, revenue in by_region.items():
+        lines.append(f"  {region}: {revenue:.2f}\n")
+
+    lines.append("\n--- Top Selling Product ---\n")
+    top_product = df.groupby("product")["quantity"].sum().sort_values(ascending=False)
+    top_name = top_product.index[0]
+    top_qty = top_product.iloc[0]
+    lines.append(f"  {top_name}: {top_qty} units\n")
+
+    output_file = source_filename.replace(".csv", "_report.txt")
+    try:
+        with open(output_file, "w") as f:
+            f.writelines(lines)
+        print(Fore.GREEN + Back.BLACK + Style.BRIGHT + f"Report saved to {output_file}!" + Style.RESET_ALL)
+    except IOError as e:
+        print(Fore.WHITE + Back.RED + f"Fatal Error: Failed to save report. {e}" + Style.RESET_ALL)
+
+
 def main():
     filename = input(Fore.CYAN + Style.BRIGHT + "Enter CSV filename: " + Style.RESET_ALL)
     df = load_data(filename)
@@ -81,8 +114,9 @@ def main():
         print("\n" + Fore.BLACK + Back.WHITE + "--- Sales Report Generator ---" + Style.RESET_ALL)
         print(Fore.YELLOW + Style.NORMAL + "(1) Clean Data" + Style.RESET_ALL)
         print(Fore.YELLOW + Style.NORMAL + "(2) Generate Report" + Style.RESET_ALL)
-        print(Fore.YELLOW + Style.NORMAL + "(3) Save Cleaned Data" + Style.RESET_ALL)
-        print(Fore.YELLOW + Style.NORMAL + "(4) Quit" + Style.RESET_ALL)
+        print(Fore.YELLOW + Style.NORMAL + "(3) Save Data" + Style.RESET_ALL)
+        print(Fore.YELLOW + Style.NORMAL + "(4) Export Report to TXT" + Style.RESET_ALL)
+        print(Fore.YELLOW + Style.NORMAL + "(5) Quit" + Style.RESET_ALL)
 
         try:
             choice = int(input("\n" + Fore.CYAN + Style.BRIGHT + "Enter Your Choice: " + Style.RESET_ALL))
@@ -97,6 +131,8 @@ def main():
         elif choice == 3:
             save_report(df)
         elif choice == 4:
+            export_report(df, filename)
+        elif choice == 5:
             print(Fore.WHITE + Style.BRIGHT + "Bye! Thanks For Using Sales Report Generator!" + Style.RESET_ALL)
             break
         else:
